@@ -12,13 +12,27 @@ describe("validateReservationPeriod", () => {
   });
 
   test("returns null when the start is after the end", () => {
-    // TODO S19 STUDENT 1:
-    // Implement this error case using Arrange, Act, Assert.
+    // Arrange
+    const startTime = "2026-10-13T12:00:00.000Z";
+    const endTime = "2026-10-13T11:00:00.000Z";
+
+    // Act
+    const period = validateReservationPeriod(startTime, endTime);
+
+    // Assert
+    expect(period).toBeNull();
   });
 
   test("returns null when the start equals the end", () => {
-    // TODO S19 STUDENT 2:
-    // Implement this boundary case using Arrange, Act, Assert.
+    // Arrange
+    const startTime = "2026-10-13T10:00:00.000Z";
+    const endTime = "2026-10-13T10:00:00.000Z";
+
+    // Act
+    const period = validateReservationPeriod(startTime, endTime);
+
+    // Assert
+    expect(period).toBeNull();
   });
 
   test("accepts another valid period", () => {
@@ -34,8 +48,15 @@ describe("validateReservationPeriod", () => {
   });
 
   test("returns null for an invalid date string", () => {
-    // TODO S19 STUDENT 3:
-    // Verify how the rule behaves with invalid date input.
+    // Arrange
+    const startTime = "not-a-date";
+    const endTime = "2026-10-13T11:00:00.000Z";
+
+    // Act
+    const period = validateReservationPeriod(startTime, endTime);
+
+    // Assert
+    expect(period).toBeNull();
   });
 
   test("returns null when an input is not a string", () => {
@@ -55,18 +76,54 @@ describe("hasTimeConflict", () => {
   });
 
   test("reports a conflict when the new period starts inside the existing period", () => {
-    // TODO S19 STUDENT 4:
-    // Verify that an overlapping reservation is detected.
+    // Arrange
+    const newStart = new Date("2026-10-13T10:30:00.000Z");
+    const newEnd = new Date("2026-10-13T11:30:00.000Z");
+
+    // Act
+    const conflict = hasTimeConflict(
+      newStart,
+      newEnd,
+      existingStart,
+      existingEnd,
+    );
+
+    // Assert
+    expect(conflict).toBe(true);
   });
 
   test("reports a conflict when the new period ends inside the existing period", () => {
-    // TODO S19 STUDENT 5:
-    // Verify the overlap from the opposite side.
+    // Arrange
+    const newStart = new Date("2026-10-13T09:30:00.000Z");
+    const newEnd = new Date("2026-10-13T10:30:00.000Z");
+
+    // Act
+    const conflict = hasTimeConflict(
+      newStart,
+      newEnd,
+      existingStart,
+      existingEnd,
+    );
+
+    // Assert
+    expect(conflict).toBe(true);
   });
 
   test("reports a conflict when the new period is completely inside the existing period", () => {
-    // TODO S19 STUDENT 6:
-    // Verify that a reservation fully inside another one conflicts.
+    // Arrange
+    const newStart = new Date("2026-10-13T10:15:00.000Z");
+    const newEnd = new Date("2026-10-13T10:45:00.000Z");
+
+    // Act
+    const conflict = hasTimeConflict(
+      newStart,
+      newEnd,
+      existingStart,
+      existingEnd,
+    );
+
+    // Assert
+    expect(conflict).toBe(true);
   });
 
   test("reports a conflict when the new period contains the existing period", () => {
@@ -89,13 +146,37 @@ describe("hasTimeConflict", () => {
   });
 
   test("allows a period starting exactly when the existing period ends", () => {
-    // TODO S19 STUDENT 7:
-    // Verify this boundary condition.
+    // Arrange
+    const newStart = new Date("2026-10-13T11:00:00.000Z");
+    const newEnd = new Date("2026-10-13T12:00:00.000Z");
+
+    // Act
+    const conflict = hasTimeConflict(
+      newStart,
+      newEnd,
+      existingStart,
+      existingEnd,
+    );
+
+    // Assert
+    expect(conflict).toBe(false);
   });
 
   test("allows a period completely before the existing period", () => {
-    // TODO S19 STUDENT 8:
-    // Verify a non-overlapping reservation before the existing one.
+    // Arrange
+    const newStart = new Date("2026-10-13T08:00:00.000Z");
+    const newEnd = new Date("2026-10-13T09:00:00.000Z");
+
+    // Act
+    const conflict = hasTimeConflict(
+      newStart,
+      newEnd,
+      existingStart,
+      existingEnd,
+    );
+
+    // Assert
+    expect(conflict).toBe(false);
   });
 
   test("allows a period completely after the existing period", () => {
@@ -120,13 +201,27 @@ describe("canReserveSpot", () => {
   });
 
   test("rejects an inactive spot even without a conflict", () => {
-    // TODO S19 STUDENT 9:
-    // Verify that an inactive spot cannot be reserved.
+    // Arrange
+    const active = false;
+    const hasConflict = false;
+
+    // Act
+    const allowed = canReserveSpot(active, hasConflict);
+
+    // Assert
+    expect(allowed).toBe(false);
   });
 
   test("rejects an active spot when there is a conflict", () => {
-    // TODO S19 STUDENT 10:
-    // Verify that a time conflict prevents reservation.
+    // Arrange
+    const active = true;
+    const hasConflict = true;
+
+    // Act
+    const allowed = canReserveSpot(active, hasConflict);
+
+    // Assert
+    expect(allowed).toBe(false);
   });
 
   test("rejects an inactive spot when there is also a conflict", () => {
